@@ -1,34 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <meta charset="UTF-8">
+    <title>FizzBuzz by gaurangsinha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>FizzBuzz by gaurangsinha</title>
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>FizzBuzz</h1>
-        <h2>Hello World :)</h2>
-        <a href="https://github.com/gaurangsinha" class="button"><small>Follow me on</small> GitHub</a>
-      </div>
-    </header>
+    <section class="page-header">
+      <h1 class="project-name">FizzBuzz</h1>
+      <h2 class="project-tagline">Hello World :)</h2>
+    </section>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <p>Lets take a look at the FizzBuzz problem while exploring some of the tradeoffs involved in developing applications.
+    <section class="main-content">
+      <p>Lets take a look at the FizzBuzz problem while exploring some of the tradeoffs involved in developing applications.
 We are going to look at a few different implementations of FizzBuzz, each has been designed with different purpose. We will also explore the effect of each implementation.</p>
 
 <h2>
@@ -65,7 +53,7 @@ We are going to look at a few different implementations of FizzBuzz, each has be
         result += isBuzz ? BUZZ : <span class="pl-k">string</span>.Empty;
         result += !isFizz &amp;&amp; !isBuzz ? i.ToString() : <span class="pl-k">string</span>.Empty;
 
-        Log(result);
+        Console.WriteLine(result);
     }
 }</pre></div>
 
@@ -79,9 +67,17 @@ We are going to look at a few different implementations of FizzBuzz, each has be
             result += (<span class="pl-c1">0</span> == i % trigger.Item1) ? trigger.Item2 : <span class="pl-k">string</span>.Empty;
         }
         result = <span class="pl-k">string</span>.IsNullOrEmpty(result) ? i.ToString() : result;
-        Log(result);
+        Console.WriteLine(result);
     }
-}</pre></div>
+}
+
+FizzBuzz(
+    Enumerable.Range(<span class="pl-c1">1</span>, <span class="pl-c1">100</span>), 
+    <span class="pl-k">new</span> Tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">string</span>&gt;[] {
+        Tuple.Create&lt;<span class="pl-k">int</span>, <span class="pl-k">string</span>&gt;(<span class="pl-c1">3</span>, <span class="pl-s"><span class="pl-pds">"</span>Fizz<span class="pl-pds">"</span></span>),
+        Tuple.Create&lt;<span class="pl-k">int</span>, <span class="pl-k">string</span>&gt;(<span class="pl-c1">5</span>, <span class="pl-s"><span class="pl-pds">"</span>Buzz<span class="pl-pds">"</span></span>)
+    }
+);</pre></div>
 
 <h2>
 <a id="predicates" class="anchor" href="#predicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predicates</h2>
@@ -93,29 +89,44 @@ We are going to look at a few different implementations of FizzBuzz, each has be
             result += trigger.Item1(i) ? trigger.Item2 : <span class="pl-k">string</span>.Empty;
         }
         result = <span class="pl-k">string</span>.IsNullOrEmpty(result) ? i.ToString() : result;
-        Log(result);
+        Console.WriteLine(result);
     }
-}</pre></div>
+}
+
+FizzBuzz(
+    Enumerable.Range(<span class="pl-c1">1</span>, <span class="pl-c1">100</span>),
+    <span class="pl-k">new</span> Tuple&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;[] {
+        Tuple.Create&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;(i =&gt; <span class="pl-c1">0</span> == i%<span class="pl-c1">3</span>, <span class="pl-s"><span class="pl-pds">"</span>Fizz<span class="pl-pds">"</span></span>),
+        Tuple.Create&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;(i =&gt; <span class="pl-c1">0</span> == i%<span class="pl-c1">5</span>, <span class="pl-s"><span class="pl-pds">"</span>Buzz<span class="pl-pds">"</span></span>)
+    }
+);</pre></div>
 
 <h2>
 <a id="lazy-evaluation" class="anchor" href="#lazy-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lazy Evaluation</h2>
 
-<div class="highlight highlight-source-cs"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> IEnumerable&lt;<span class="pl-k">string</span>&gt; FizzBuzz_FP(IEnumerable&lt;<span class="pl-k">int</span>&gt; range, IEnumerable&lt;Tuple&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;&gt; triggers) {
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> IEnumerable&lt;<span class="pl-k">string</span>&gt; FizzBuzz(IEnumerable&lt;<span class="pl-k">int</span>&gt; range, IEnumerable&lt;Tuple&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;&gt; triggers) {
     <span class="pl-k">return</span> range.Select(i =&gt; {
         <span class="pl-k">var</span> parts = triggers.Select(t =&gt; t.Item1(i) ? t.Item2 : <span class="pl-k">string</span>.Empty);
         <span class="pl-k">var</span> text = <span class="pl-k">string</span>.Join(<span class="pl-k">string</span>.Empty, parts);
         <span class="pl-k">return</span> <span class="pl-k">string</span>.IsNullOrEmpty(text) ? i.ToString() : text;
     });
-}</pre></div>
-        </section>
+}
 
-        <aside id="sidebar">
+<span class="pl-k">var</span> result = FizzBuzz(
+    Enumerable.Range(<span class="pl-c1">1</span>, <span class="pl-c1">100</span>),
+    <span class="pl-k">new</span> Tuple&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;[] {
+        Tuple.Create&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;(i =&gt; <span class="pl-c1">0</span> == i%<span class="pl-c1">3</span>, <span class="pl-s"><span class="pl-pds">"</span>Fizz<span class="pl-pds">"</span></span>),
+        Tuple.Create&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;(i =&gt; <span class="pl-c1">0</span> == i%<span class="pl-c1">5</span>, <span class="pl-s"><span class="pl-pds">"</span>Buzz<span class="pl-pds">"</span></span>)
+    }
+);
+<span class="pl-k">foreach</span>(<span class="pl-k">var</span> line <span class="pl-k">in</span> result) { Console.WriteLine(line); }</pre></div>
 
+      <footer class="site-footer">
 
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
 
   
   </body>
