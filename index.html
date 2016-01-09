@@ -1,35 +1,122 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>About Me by gaurangsinha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>FizzBuzz by gaurangsinha</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>About Me</h1>
-        <p>This is me :)</p>
+    <header>
+      <div class="inner">
+        <h1>FizzBuzz</h1>
+        <h2>Hello World :)</h2>
+        <a href="https://github.com/gaurangsinha" class="button"><small>Follow me on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p>Lets take a look at the FizzBuzz problem while exploring some of the tradeoffs involved in developing applications.
+We are going to look at a few different implementations of FizzBuzz, each has been designed with different purpose. We will also explore the effect of each implementation.</p>
+
+<h2>
+<a id="simple-fizz-buzz" class="anchor" href="#simple-fizz-buzz" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple Fizz Buzz</h2>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; <span class="pl-c1">100</span>; i++) {
+    <span class="pl-k">if</span> (<span class="pl-c1">0</span> == i % <span class="pl-c1">3</span> || <span class="pl-c1">0</span> == i % <span class="pl-c1">5</span>) {
+        Console.WriteLine(<span class="pl-s"><span class="pl-pds">"</span>FizzBuzz<span class="pl-pds">"</span></span>);
+    }
+    <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-c1">0</span> == i % <span class="pl-c1">3</span>) {
+        Console.WriteLine(<span class="pl-s"><span class="pl-pds">"</span>Fizz<span class="pl-pds">"</span></span>);
+    }
+    <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-c1">0</span> == i % <span class="pl-c1">5</span>) {
+        Console.WriteLine(<span class="pl-s"><span class="pl-pds">"</span>Buzz<span class="pl-pds">"</span></span>);
+    }
+    <span class="pl-k">else</span> {
+        Console.WriteLine(i);
+    }
+}</pre></div>
+
+<h2>
+<a id="reduce-duplicate-code" class="anchor" href="#reduce-duplicate-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reduce Duplicate Code</h2>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">const</span> <span class="pl-k">string</span> FIZZ = <span class="pl-s"><span class="pl-pds">"</span>Fizz<span class="pl-pds">"</span></span>;
+<span class="pl-k">const</span> <span class="pl-k">string</span> BUZZ = <span class="pl-s"><span class="pl-pds">"</span>Buzz<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> FizzBuzz() {
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; <span class="pl-c1">100</span>; i++) {
+        <span class="pl-k">bool</span> isFizz = (<span class="pl-c1">0</span> == i % <span class="pl-c1">3</span>);
+        <span class="pl-k">bool</span> isBuzz = (<span class="pl-c1">0</span> == i % <span class="pl-c1">5</span>);
+        <span class="pl-k">string</span> result = <span class="pl-k">string</span>.Empty;
+
+        result += isFizz ? FIZZ : <span class="pl-k">string</span>.Empty;
+        result += isBuzz ? BUZZ : <span class="pl-k">string</span>.Empty;
+        result += !isFizz &amp;&amp; !isBuzz ? i.ToString() : <span class="pl-k">string</span>.Empty;
+
+        Log(result);
+    }
+}</pre></div>
+
+<h2>
+<a id="parameterized" class="anchor" href="#parameterized" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parameterized</h2>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> FizzBuzz(IEnumerable&lt;<span class="pl-k">int</span>&gt; range, IEnumerable&lt;Tuple&lt;<span class="pl-k">int</span>, <span class="pl-k">string</span>&gt;&gt; triggers) {
+    <span class="pl-k">foreach</span> (<span class="pl-k">int</span> i <span class="pl-k">in</span> range) {
+        <span class="pl-k">string</span> result = <span class="pl-k">string</span>.Empty;
+        <span class="pl-k">foreach</span> (<span class="pl-k">var</span> trigger <span class="pl-k">in</span> triggers) {
+            result += (<span class="pl-c1">0</span> == i % trigger.Item1) ? trigger.Item2 : <span class="pl-k">string</span>.Empty;
+        }
+        result = <span class="pl-k">string</span>.IsNullOrEmpty(result) ? i.ToString() : result;
+        Log(result);
+    }
+}</pre></div>
+
+<h2>
+<a id="predicates" class="anchor" href="#predicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predicates</h2>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">void</span> FizzBuzz(IEnumerable&lt;<span class="pl-k">int</span>&gt; range, IEnumerable&lt;Tuple&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;&gt; triggers) {
+    <span class="pl-k">foreach</span> (<span class="pl-k">int</span> i <span class="pl-k">in</span> range) {
+        <span class="pl-k">string</span> result = <span class="pl-k">string</span>.Empty;
+        <span class="pl-k">foreach</span> (<span class="pl-k">var</span> trigger <span class="pl-k">in</span> triggers) {
+            result += trigger.Item1(i) ? trigger.Item2 : <span class="pl-k">string</span>.Empty;
+        }
+        result = <span class="pl-k">string</span>.IsNullOrEmpty(result) ? i.ToString() : result;
+        Log(result);
+    }
+}</pre></div>
+
+<h2>
+<a id="lazy-evaluation" class="anchor" href="#lazy-evaluation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lazy Evaluation</h2>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-k">public</span> <span class="pl-k">static</span> IEnumerable&lt;<span class="pl-k">string</span>&gt; FizzBuzz_FP(IEnumerable&lt;<span class="pl-k">int</span>&gt; range, IEnumerable&lt;Tuple&lt;Predicate&lt;<span class="pl-k">int</span>&gt;, <span class="pl-k">string</span>&gt;&gt; triggers) {
+    <span class="pl-k">return</span> range.Select(i =&gt; {
+        <span class="pl-k">var</span> parts = triggers.Select(t =&gt; t.Item1(i) ? t.Item2 : <span class="pl-k">string</span>.Empty);
+        <span class="pl-k">var</span> text = <span class="pl-k">string</span>.Join(<span class="pl-k">string</span>.Empty, parts);
+        <span class="pl-k">return</span> <span class="pl-k">string</span>.IsNullOrEmpty(text) ? i.ToString() : text;
+    });
+}</pre></div>
+        </section>
+
+        <aside id="sidebar">
 
 
-        <p class="view"><a href="https://github.com/gaurangsinha">View My GitHub Profile</a></p>
-
-      </header>
-      <section>
-        <p>Hello World</p>
-      </section>
-      <footer>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+  
   </body>
 </html>
