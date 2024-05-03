@@ -1,0 +1,122 @@
+/* Typography */
+body {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #eee;
+  background: #121212;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+p {
+  margin-bottom: 15px;
+}
+
+/* Links */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Layout */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Header */
+.header {
+  padding: 0 0 0 1rem;
+  text-align: left;
+  justify-content: space-between;
+}
+
+.header h1 {
+  display: inline;
+  font-size: 36px;
+  margin-bottom: 0;
+}
+
+
+.header ul {
+  display: inline;
+  margin: 0;
+  padding: 0.5rem 0 0;
+  text-decoration: none;
+  list-style-type: none;
+  float: right;
+}
+
+.header li {
+  display: inline;
+  margin-right: 10px;
+}
+
+.header a {
+  color: #eee;
+  padding: 5px 10px;
+}
+
+.header a:hover {
+  border-radius: 3px;
+}
+
+/* Content */
+.content {
+  margin-bottom: 30px;
+}
+
+/* Footer */
+.footer {
+  background-color: #f8f8f8;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #eee;
+  background: #121212;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .navbar {
+    padding: 10px;
+  }
+
+  .navbar li {
+    margin-right: 5px;
+  }
+
+  .footer {
+    font-size: 12px;
+  }
+}
