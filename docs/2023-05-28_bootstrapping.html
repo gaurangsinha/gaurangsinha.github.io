@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>gaurang.dev | bootstrapping</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -56,23 +57,66 @@
 </style>
 
 <p>
-There are so many tools and systems to build static sites, each with its own set of dependencies, rules and requirements. 
+There are so many tools and systems to build static sites, each with its own set of dependencies, rules and requirements.
 </p>
 
 <h3>Why I started <a href="https://github.com/gaurangsinha/m4ke">m4ke</a></h3>
 My main goal was to create a tool for building static blogs that was easy for me to use. I wanted to cut down on the number of steps and the need for extra tooling, <span class="tooltip">making<span class="tooltiptext">😂</span></span> it straightforward for me to get my blog up and running without any hassle.
 
 <h3>How <a href="https://github.com/gaurangsinha/m4ke">m4ke</a> works</h3>
-At its core, <a href="https://github.com/gaurangsinha/m4ke">m4ke</a> uses a simple concept: it takes text files, processes them (using <a href="https://www.gnu.org/software/m4/">m4</a> and <a href="https://www.gnu.org/software/make/">make</a>), and turns them into a website. No need to install a bunch of dependencies or learn new syntax. Just a text editor, some html and css. 
+At its core, <a href="https://github.com/gaurangsinha/m4ke">m4ke</a> uses a simple concept: it takes text files, processes them, and turns them into a website. It doesn't have any dependencies or frameworks. All you need is a text editor and a shell to run make.
+
+
+<pre><code>
+                       ┌────────────┐
+┌──────────┐  ┌────┐  ┌┴───────────┐│
+│          │  │    │  │            ││
+│ Makefile ├─►│ m4 ├─►│Posts (html)││
+│          │  │    │  │            ├┘
+└──────────┘  └─▲──┘  └────────────┘
+                │
+        ┌───────┴──┐
+       ┌┤Posts (m4)│
+       │└─────────┬┘
+       └──────────┘
+</code></pre>
+
+<h4><a href="https://www.gnu.org/software/make/" target="_blank">Makefile</a></h4>
+<p>
+GNU Make is a tool which controls the generation of executables and other non-source files of a program from the program's source files.
+</p>
+
+<h4><a href="https://www.gnu.org/software/m4/" target="_blank">m4 macro processor</a></h4>
+<p>
+GNU M4 is a macro processor in the sense that it copies its input to the output expanding macros as it goes. Macros are either builtin or user-defined and can take any number of arguments.
+</p>
+
+<p>
+We essentially convert the input files into html files, <a href="https://www.gnu.org/software/make/" target="_blank">make</a> is designed for this since it essentially converts source into intermediate or binary representations.
+<p>Program flow can be described in these steps:</p>
+<ul>
+<li>For all files ending in .m4</li>
+<li>Run the file through <a href='https://www.gnu.org/software/m4/manual/m4.html' target="_blank">m4 macro processor</a> to generate html files</li>
+</ul>
+</p>
+
+<h3>Who is this for?</h3>
+Mostly me, but feel free to give it a try especially if you like using standard unix tools to get the job done and have a basic grasp of html & css.
+
+<p>
+   <a style="float:right;" href="00_posts.html">all posts =&gt;</a>
+</p>
 
     </div>
 
     <footer class="footer">
-      <p>&copy; 2024
+      <p>&copy; 2025
  Gaurang Sinha. All rights reserved.</p>
       <p>built using <a href="https://github.com/gaurangsinha/m4ke">m4ke</a></p>
     </footer>
   </div>
 </body>
 </html>
+
+
 

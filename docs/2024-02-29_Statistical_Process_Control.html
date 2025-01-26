@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>gaurang.dev | Statistical Process Control</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <a href="https://gaurang.dev"><h1>gaurang.dev</h1></a>
+      
+      <ul>     
+        <li><a href="00_about.html">About</a></li>
+        <li><a href="00_posts.html">Posts</a></li>
+        <li><a href="00_contact.html">Contact</a></li>
+      </ul>
+      
+    </header>
+
+    <h2>Statistical Process Control</h2>
+    <p style="color: #a8a8a8">
+      2024-04-29
+    </p>
+    <div class="content">
+
+
+
+<h2>What is a Stable Process</h2>
+A stable process is one that operates predictably over time, with variation that is solely due to common causes. These common causes are inherent to the process and are considered "natural" or "random" sources of variation. A stable process displays a consistent pattern of variation that remains within established control limits.
+
+<blockquote>By focusing on maintaining stable processes and quickly identifying and addressing special causes of variation, organizations can improve quality, reduce waste, and increase efficiency.</blockquote>
+
+<h2>Why can’t we just compare</h2>
+
+Some of the most common ways to compare and why they are not enough:
+
+<ol>
+  <li>Compared against previous
+    <blockquote>We used N machine hours last week for testing; this week we used 10% less, did we not test enough?</blockquote> 
+    <p>Since we’re dealing with physical machines, getting the exact measurement is not possible, sometimes this difference is large and other times its small. Just comparing against previous does not provide us any useful information.</p>
+  </li>
+  <li>Compared against average
+    <blockquote>We used N machine hours on average last month; this month we used 10% more, did we regress on our test times?</blockquote>
+    <p>Assuming the process has a normal distribution, by definition half of the measurements will be below average. If the process isn’t normally distributed then the outliers might pull the average in a direction that might make your process look good while in reality things are not.</p>
+  </li>
+  <li>Compared against (wishful) threshold 
+    <blockquote>We used N machine hours which were above X threshold; why are we not meeting criteria set?</blockquote>
+    <p>There are various names that are used to describe this number - budgets, goals, targets, etc. They are a few themes when we look at thresholds</p> 
+    <p>Created out of thin air - you cannot make things better by wishing for it.</p>
+    <p>Reach X before going forward - e.g. your service is integral to the system and needs to respond within 10ms. In this scenario threshold might provide some value, but it’s incomplete. This being a binary signal doesn’t necessarily help the team improve.</p>
+  </li>
+</ol>
+<p>
+   <a style="float:right;" href="00_posts.html">all posts =&gt;</a>
+</p>
+
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025
+ Gaurang Sinha. All rights reserved.</p>
+      <p>built using <a href="https://github.com/gaurangsinha/m4ke">m4ke</a></p>
+    </footer>
+  </div>
+</body>
+</html>
+
+
+
