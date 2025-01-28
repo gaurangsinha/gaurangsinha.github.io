@@ -27,9 +27,60 @@
 
 
 
-<h3><a href="https://www.youtube.com/watch?v=Zs5UJqgu0tY">Intellectual Control vs Statistical Control</a></h3>
+<h4><a href="https://www.youtube.com/watch?v=Zs5UJqgu0tY">Intellectual Control vs Statistical Control</a></h4>
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Zs5UJqgu0tY?si=BP1sams8ZjlPZ12H&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<h4>Intellectual Control (IC)</h4>
 <p>
-George Fairbanks discusses the importance of intellectual control in software development. He argues that while testing is crucial, it should not come at the expense of reasoning about the code.
+When you understand the code at an intellectual level and you know what the code should do without having to execute it.
+</p>
+<p>
+Essentially, intellectual control is the confidence you gain from being able to reason on the outcome of execution.
+</p>
+<h4>Statistical Control (SC)</h4>
+<p>
+Relying on testing to gain confidence in the correctness of the software. 
+</p>
+<p>
+Over-reliance on testing can lead developers to neglect intellectual control, which is the ability to reason about code and predict its behavior without executing it.
+</p>
+<h4>What happens when you don’t have IC</h4>
+<ul>
+  <li>People will resort to whack-a-mole development</li>
+  <li>People start to perform “P hacking”</li>
+  <li>Selective test execution</li>
+  <li>Ignoring test failures</li>
+  <li>Overfitting test cases</li>
+  <li>Leads to the Inverted test pyramid</li>
+</ul>
+<h4>Test distribution without IC</h4>
+<pre>
+  <code>
+ Martini            Pyramid
+_________             /\
+\       /            /  \
+ \     /  Large     /    \      e2e tests  
+  \___/            /______\
+  |   |  Medium   /        \    integration tests
+  |___|          /__________\
+ /     \ Small  /            \  unit tests
+/_______\      /______________\
+  </code>
+</pre>
+<ul>
+  <li>hard to write</li>
+  <li>they are more likely to be flaky</li>
+  <li>require more resources to:
+    <ul>
+      <li>create (developer time)</li>
+      <li>execute (machine time)</li>
+      <li>and triage (developer time)</li>
+    </ul>
+  </li>
+  <li>might have a low signal to noise ratio</li>
+</ul>
+<h4>Focus on Intellectual Control</h4>
+<p>
+Maintaining intellectual control over complex systems can be challenging once it's lost. The complexity of these systems increases super-linearly, meaning that even a small increase in the number of modules can result in a significant jump in the number of interconnections that need to be understood. For example, if we have two modules that are not well understood, the complexity is 2. However, if we have ten modules, we have 55 paths that need to be understood.
 </p>
