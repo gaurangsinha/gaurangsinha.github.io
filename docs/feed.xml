@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>My Website</title>
+  <link>https://gaurang.dev</link>
+  <description>My website feed</description>
+  <atom:link href="https://gaurang.dev/feed.xml" rel="self" type="application/rss+xml" />
+  <lastBuildDate>Wed, 07 May 2025 02:03:54 +0000</lastBuildDate>
+<item>
+  <title>Capability and Agency</title>
+  <link>https://gaurang.dev/2025-04-04_Capability_and_Agency.html</link>
+  <pubDate>Fri, 04 Apr 2025 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2025-04-04_Capability_and_Agency.html</guid>
+  <description>Capability and Agency</description>
+</item>
+<item>
+  <title>AnyAPI</title>
+  <link>https://gaurang.dev/2025-03-02_AnyAPI.html</link>
+  <pubDate>Sun, 02 Mar 2025 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2025-03-02_AnyAPI.html</guid>
+  <description>AnyAPI</description>
+</item>
+<item>
+  <title>OTP Raj</title>
+  <link>https://gaurang.dev/2025-02-17_OTP_Raj.html</link>
+  <pubDate>Mon, 17 Feb 2025 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2025-02-17_OTP_Raj.html</guid>
+  <description>OTP Raj</description>
+</item>
+<item>
+  <title>Code is debt</title>
+  <link>https://gaurang.dev/2024-12-18_Code_is_debt.html</link>
+  <pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2024-12-18_Code_is_debt.html</guid>
+  <description>Code is debt</description>
+</item>
+<item>
+  <title>Strategy</title>
+  <link>https://gaurang.dev/2024-08-09_Strategy.html</link>
+  <pubDate>Fri, 09 Aug 2024 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2024-08-09_Strategy.html</guid>
+  <description>Strategy</description>
+</item>
+<item>
+  <title>Intellectual control vs Statistical control</title>
+  <link>https://gaurang.dev/2024-05-22_Intellectual_control_vs_Statistical_control.html</link>
+  <pubDate>Wed, 22 May 2024 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2024-05-22_Intellectual_control_vs_Statistical_control.html</guid>
+  <description>Intellectual control vs Statistical control</description>
+</item>
+<item>
+  <title>Statistical Process Control</title>
+  <link>https://gaurang.dev/2024-02-29_Statistical_Process_Control.html</link>
+  <pubDate>Thu, 29 Feb 2024 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2024-02-29_Statistical_Process_Control.html</guid>
+  <description>Statistical Process Control</description>
+</item>
+<item>
+  <title>Explore Expand Extract</title>
+  <link>https://gaurang.dev/2024-02-27_Explore_Expand_Extract.html</link>
+  <pubDate>Tue, 27 Feb 2024 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2024-02-27_Explore_Expand_Extract.html</guid>
+  <description>Explore Expand Extract</description>
+</item>
+<item>
+  <title>What Made Apollo A Success</title>
+  <link>https://gaurang.dev/2023-12-18_What_Made_Apollo_A_Success.html</link>
+  <pubDate>Mon, 18 Dec 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-12-18_What_Made_Apollo_A_Success.html</guid>
+  <description>What Made Apollo A Success</description>
+</item>
+<item>
+  <title>How to approach large initiatives</title>
+  <link>https://gaurang.dev/2023-09-23_How_to_approach_large_initiatives.html</link>
+  <pubDate>Sat, 23 Sep 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-09-23_How_to_approach_large_initiatives.html</guid>
+  <description>How to approach large initiatives</description>
+</item>
+<item>
+  <title>Productivity is not</title>
+  <link>https://gaurang.dev/2023-09-08_Productivity_is_not.html</link>
+  <pubDate>Fri, 08 Sep 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-09-08_Productivity_is_not.html</guid>
+  <description>Productivity is not</description>
+</item>
+<item>
+  <title>Opinion of Probable Development Cost</title>
+  <link>https://gaurang.dev/2023-07-30_Opinion_of_Probable_Development_Cost.html</link>
+  <pubDate>Sun, 30 Jul 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-07-30_Opinion_of_Probable_Development_Cost.html</guid>
+  <description>Opinion of Probable Development Cost</description>
+</item>
+<item>
+  <title>The Systems Bible Take Aways</title>
+  <link>https://gaurang.dev/2023-06-12_The_Systems_Bible_Take_Aways.html</link>
+  <pubDate>Mon, 12 Jun 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-06-12_The_Systems_Bible_Take_Aways.html</guid>
+  <description>The Systems Bible Take Aways</description>
+</item>
+<item>
+  <title>bootstrapping</title>
+  <link>https://gaurang.dev/2023-05-28_bootstrapping.html</link>
+  <pubDate>Sun, 28 May 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-05-28_bootstrapping.html</guid>
+  <description>bootstrapping</description>
+</item>
+<item>
+  <title>Communication and Competence</title>
+  <link>https://gaurang.dev/2023-04-23_Communication_and_Competence.html</link>
+  <pubDate>Sun, 23 Apr 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-04-23_Communication_and_Competence.html</guid>
+  <description>Communication and Competence</description>
+</item>
+<item>
+  <title>How we should work</title>
+  <link>https://gaurang.dev/2023-02-24_How_we_should_work.html</link>
+  <pubDate>Fri, 24 Feb 2023 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2023-02-24_How_we_should_work.html</guid>
+  <description>How we should work</description>
+</item>
+<item>
+  <title>fizzbuzz</title>
+  <link>https://gaurang.dev/2016-01-19_fizzbuzz.html</link>
+  <pubDate>Tue, 19 Jan 2016 00:00:00 +0000</pubDate>
+  <guid>https://gaurang.dev/2016-01-19_fizzbuzz.html</guid>
+  <description>fizzbuzz</description>
+</item>
+
+</channel>
+</rss>
