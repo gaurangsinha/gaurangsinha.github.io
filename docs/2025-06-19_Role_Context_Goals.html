@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Outlines core principles for effective AI prompting, primarily for Software Engineers. It introduces the RCG (Role Context & Goals) framework. Also includes prompts templates in a cheat sheet.">
+  <title>gaurang.dev | Role, Context & Goals (RCG)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <a href="https://gaurang.dev"><h1>gaurang.dev</h1></a>
+      
+      <ul>     
+        <li><a href="00_about.html">About</a></li>
+        <li><a href="00_posts.html">Posts</a></li>
+        <li><a href="00_contact.html">Contact</a></li>
+      </ul>
+      
+    </header>
+
+    <h2>Role, Context & Goals (RCG)</h2>
+    <p style="color: #a8a8a8">
+      2025-06-19
+    </p>
+    <div class="content">
+
+
+
+<h1>Prompting 101 for SWEs - Role, Context & Goals (RCG)</h1>
+
+<p>Let’s start with some core principles for building an effective prompt;</p>
+<p><strong>Role, Context & Goals (RCG)</strong></p>
+
+    <h3>Role</h3>
+    <p>Put the LLM into the shoes of the person you’d like it to be.</p>
+    <table>
+        <tr>
+            <td>❌</td>
+            <td>“rewrite this function …”</td>
+        </tr>
+        <tr>
+            <td>✅</td>
+            <td>“You are a senior software engineer and an expert in python. Rewrite the following function to ...”</td>
+        </tr>
+    </table>
+
+    <h3>Context</h3>
+    <p>LLMs only know what you tell them. So, make sure to give it all the necessary details!</p>
+    <table>
+        <tr>
+            <td>❌</td>
+            <td>“why does this not work…”</td>
+        </tr>
+        <tr>
+            <td>✅</td>
+            <td>“I have a python rest api built using flask, one of the routing functions is throwing a type error. Here’s the error ...”</td>
+        </tr>
+    </table>
+
+    <h3>Goal</h3>
+    <p>Garbage in = garbage out, vague prompts result in useless answers. Being specific about your end goals helps guide the LLM to produce something usable.</p>
+    <table>
+        <tr>
+            <td>❌</td>
+            <td>“make this work…”</td>
+        </tr>
+        <tr>
+            <td>✅</td>
+            <td>“this python function is returning None rather than the &lt;expected result&gt;. Given the code below can you identify and fix the problem.”</td>
+        </tr>
+    </table>
+
+    <h3>Examples</h3>
+    <p>If possible, show what you want using an example.</p>
+    <table>
+        <tr>
+            <td>✅</td>
+            <td>“When the function receives [9,5,6] it should return [5,6,9]. Given the code below can you identify and fix the problem.”</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>✅ Prompt Cheat Sheet</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Prompt Template</th>
+                <th>Use case</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Role Context Goal</td>
+                <td>You are a {role} and an expert in {language}. This {program} written in {language} using {framework/tool} is used for {context}. Review this {function/file} for {goal}</td>
+                <td>Code reviews, debugging, refactoring</td>
+            </tr>
+            <tr>
+                <td>Triage</td>
+                <td>You are a senior software engineer and an expert in {language}. This {program} written in {language} using {framework/tool} is used for {context}. Walk through {function/file} line by line. [For the given {input}]. What are the variable values? Where might it break?</td>
+                <td>Debugging, simulating runtime behavior, potentially surface hidden bugs.</td>
+            </tr>
+            <tr>
+                <td>Creation with chaining</td>
+                <td>You are a senior software engineer and an expert in {language}. I’m building a {goal} with the following requirements: {context}, using {language} and {framework/tool}. First generate a skeleton of the components. Next we’ll add state. Then handle API calls…</td>
+                <td>Feature development, chaining</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>❌ Prompt Anti-Pattern</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Prompt</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Vague</td>
+                <td>Write a function to do X<br>Please fix the function below…</td>
+                <td>For an LLM to provide relevant responses, specific details must be included.</td>
+            </tr>
+            <tr>
+                <td>Overloaded</td>
+                <td>Generate a complete web application with user authentication, a front end using angular with tests and deployment scripts</td>
+                <td>Do one thing at a time, create a feedback loop where you as a human can verify if we’re still headed in the right direction</td>
+            </tr>
+            <tr>
+                <td>No question</td>
+                <td>Here's my code …</td>
+                <td>Always include a clear ask</td>
+            </tr>
+            <tr>
+                <td>Success Criteria</td>
+                <td>Improve my code …</td>
+                <td>Vague success criteria will result in suboptimal responses.</td>
+            </tr>
+        </tbody>
+    </table>
+
+<p>
+   <a style="float:right;" href="00_posts.html">all posts =&gt;</a>
+</p>
+
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2025
+ Gaurang Sinha. All rights reserved.</p>
+      <p>built using <a href="https://github.com/gaurangsinha/m4ke">m4ke</a></p>
+    </footer>
+  </div>
+</body>
+</html>
+
+
+
