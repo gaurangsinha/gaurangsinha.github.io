@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>My Awesome Blog</title>
+  <link>https://domain.com</link>
+  <description>This is my awesome blog.</description>
+<item><title>2025-07-21 Context is Key</title><link>https://gaurang.dev/2025-07-21_Context_is_Key.html</link><description>2025-07-21 Context is Key</description><pubDate>2025-07-21</pubDate></item>
+<item><title>2025-06-19 Role Context Goals</title><link>https://gaurang.dev/2025-06-19_Role_Context_Goals.html</link><description>2025-06-19 Role Context Goals</description><pubDate>2025-06-19</pubDate></item>
+<item><title>2025-04-04 Capability and Agency</title><link>https://gaurang.dev/2025-04-04_Capability_and_Agency.html</link><description>2025-04-04 Capability and Agency</description><pubDate>2025-04-04</pubDate></item>
+<item><title>2025-03-02 AnyAPI</title><link>https://gaurang.dev/2025-03-02_AnyAPI.html</link><description>2025-03-02 AnyAPI</description><pubDate>2025-03-02</pubDate></item>
+<item><title>2025-02-17 OTP Raj</title><link>https://gaurang.dev/2025-02-17_OTP_Raj.html</link><description>2025-02-17 OTP Raj</description><pubDate>2025-02-17</pubDate></item>
+<item><title>2024-12-18 Code is debt</title><link>https://gaurang.dev/2024-12-18_Code_is_debt.html</link><description>2024-12-18 Code is debt</description><pubDate>2024-12-18</pubDate></item>
+<item><title>2024-08-09 Strategy</title><link>https://gaurang.dev/2024-08-09_Strategy.html</link><description>2024-08-09 Strategy</description><pubDate>2024-08-09</pubDate></item>
+<item><title>2024-05-22 Intellectual control vs Statistical control</title><link>https://gaurang.dev/2024-05-22_Intellectual_control_vs_Statistical_control.html</link><description>2024-05-22 Intellectual control vs Statistical control</description><pubDate>2024-05-22</pubDate></item>
+<item><title>2024-02-29 Statistical Process Control</title><link>https://gaurang.dev/2024-02-29_Statistical_Process_Control.html</link><description>2024-02-29 Statistical Process Control</description><pubDate>2024-02-29</pubDate></item>
+<item><title>2024-02-27 Explore Expand Extract</title><link>https://gaurang.dev/2024-02-27_Explore_Expand_Extract.html</link><description>2024-02-27 Explore Expand Extract</description><pubDate>2024-02-27</pubDate></item>
+<item><title>2023-12-18 What Made Apollo A Success</title><link>https://gaurang.dev/2023-12-18_What_Made_Apollo_A_Success.html</link><description>2023-12-18 What Made Apollo A Success</description><pubDate>2023-12-18</pubDate></item>
+<item><title>2023-09-23 How to approach large initiatives</title><link>https://gaurang.dev/2023-09-23_How_to_approach_large_initiatives.html</link><description>2023-09-23 How to approach large initiatives</description><pubDate>2023-09-23</pubDate></item>
+<item><title>2023-09-08 Productivity is not</title><link>https://gaurang.dev/2023-09-08_Productivity_is_not.html</link><description>2023-09-08 Productivity is not</description><pubDate>2023-09-08</pubDate></item>
+<item><title>2023-07-30 Opinion of Probable Development Cost</title><link>https://gaurang.dev/2023-07-30_Opinion_of_Probable_Development_Cost.html</link><description>2023-07-30 Opinion of Probable Development Cost</description><pubDate>2023-07-30</pubDate></item>
+<item><title>2023-06-12 The Systems Bible Take Aways</title><link>https://gaurang.dev/2023-06-12_The_Systems_Bible_Take_Aways.html</link><description>2023-06-12 The Systems Bible Take Aways</description><pubDate>2023-06-12</pubDate></item>
+<item><title>2023-05-28 bootstrapping</title><link>https://gaurang.dev/2023-05-28_bootstrapping.html</link><description>2023-05-28 bootstrapping</description><pubDate>2023-05-28</pubDate></item>
+<item><title>2023-04-23 Communication and Competence</title><link>https://gaurang.dev/2023-04-23_Communication_and_Competence.html</link><description>2023-04-23 Communication and Competence</description><pubDate>2023-04-23</pubDate></item>
+<item><title>2023-02-24 How we should work</title><link>https://gaurang.dev/2023-02-24_How_we_should_work.html</link><description>2023-02-24 How we should work</description><pubDate>2023-02-24</pubDate></item>
+<item><title>2016-01-19 fizzbuzz</title><link>https://gaurang.dev/2016-01-19_fizzbuzz.html</link><description>2016-01-19 fizzbuzz</description><pubDate>2016-01-19</pubDate></item>
+
+</channel>
+</rss>
