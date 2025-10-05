@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>gaurang.dev</title>
   <link>https://gaurang.dev</link>
-  <description>This is my personal blog.</description>
+  <description>Gaurang's personal blog.</description>
+  <generator>m4ke</generator>
 <item><title>2025-09-29 MCP and CGI Whats Old is New Again</title><link>https://gaurang.dev/2025-09-29_MCP_and_CGI_Whats_Old_is_New_Again.html</link><description>2025-09-29 MCP and CGI Whats Old is New Again</description><pubDate>2025-09-29</pubDate></item>
 <item><title>2025-07-31 Context Window Basics</title><link>https://gaurang.dev/2025-07-31_Context_Window_Basics.html</link><description>2025-07-31 Context Window Basics</description><pubDate>2025-07-31</pubDate></item>
 <item><title>2025-07-21 Context is Key</title><link>https://gaurang.dev/2025-07-21_Context_is_Key.html</link><description>2025-07-21 Context is Key</description><pubDate>2025-07-21</pubDate></item>
