@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
-  <title>My Awesome Blog</title>
-  <link>https://domain.com</link>
-  <description>This is my awesome blog.</description>
+  <title>gaurang.dev</title>
+  <link>https://gaurang.dev</link>
+  <description>This is my personal blog.</description>
 <item><title>2025-09-29 MCP and CGI Whats Old is New Again</title><link>https://gaurang.dev/2025-09-29_MCP_and_CGI_Whats_Old_is_New_Again.html</link><description>2025-09-29 MCP and CGI Whats Old is New Again</description><pubDate>2025-09-29</pubDate></item>
+<item><title>2025-07-31 Context Window Basics</title><link>https://gaurang.dev/2025-07-31_Context_Window_Basics.html</link><description>2025-07-31 Context Window Basics</description><pubDate>2025-07-31</pubDate></item>
 <item><title>2025-07-21 Context is Key</title><link>https://gaurang.dev/2025-07-21_Context_is_Key.html</link><description>2025-07-21 Context is Key</description><pubDate>2025-07-21</pubDate></item>
 <item><title>2025-06-19 Role Context Goals</title><link>https://gaurang.dev/2025-06-19_Role_Context_Goals.html</link><description>2025-06-19 Role Context Goals</description><pubDate>2025-06-19</pubDate></item>
 <item><title>2025-04-04 Capability and Agency</title><link>https://gaurang.dev/2025-04-04_Capability_and_Agency.html</link><description>2025-04-04 Capability and Agency</description><pubDate>2025-04-04</pubDate></item>
