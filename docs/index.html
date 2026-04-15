@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A look at the parallels between the new Model Context Protocol and the classic Common Gateway Interface.">
-  <title>gaurang.dev | MCP and CGI: Whats Old is New Again</title>
+  <meta name="description" content="Running an LLM in SQL (Part 1)">
+  <title>gaurang.dev | SQL LLM</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,46 +20,55 @@
       
     </header>
 
-    <h2>MCP and CGI: Whats Old is New Again</h2>
+    <h2>SQL LLM</h2>
     <p style="color: #a8a8a8">
-      2025-09-29
+      2026-04-06
     </p>
     <div class="content">
 
 
 
-It's interesting to see how patterns in technology repeat themselves. When I first looked into the new Model Context Protocol (MCP), I was reminded of the much older Common Gateway Interface (CGI). At their core, both protocols are trying to solve a similar problem: letting a primary process (a web server for CGI, an LLM for MCP) talk to and run external scripts.
-
-The similarities are worth calling out.
-
-<h4>⇒ Barebones by Design</h4>
 <p>
-Both MCP and CGI provide a minimal framework. They define how data is passed and how a script is executed, but that's about it. This leaves the heavy lifting of things like authentication, authorization, payments, etc., entirely up to the developer.
+LLMs have mostly been black boxes to me, I know they needed GPUs to speed up calculations but didnt fully understand why.
 </p>
 <p>
-This simplicity is a double-edged sword. It offers great flexibility but also means that we'll have to collectively reinvent the wheel for a lot of common functionalities, just like we did in the early days of the web.
-</p>
-<h4>⇒ Relearning Old Lessons</h4>
-<p>
-Because both protocols are so fundamental, I suspect developers using MCP will run into the same challenges we did with CGI. The early web was filled with security holes and performance issues from poorly written CGI scripts. We'll likely see a similar learning curve as the community builds out tooling and best practices for MCP.
+My goal here was to get some understanding of the LLM inference. Looking at most of the examples online didnt really help me understand it any better.
 </p>
 <p>
-We're essentially seeing a new generation of developers grapple with the same fundamental problems of extending a core technology's capabilities.
-</p>
-<h4>⇒ A Gateway to Functionality</h4>
+Knowing that inference is mostly matrix multiplication, which can be presented as
 <p>
-Thinking about it, both protocols are simply "gateways."
+<code>
+SELECT SUM(a.val * b.val) FROM a JOIN b ON a.dim = b.dim;
+</code>
+</p>
+I thought of creating an inference engine purely in SQL.  
 </p>
 <p>
-CGI was a gateway between a web server and an external script to generate dynamic content.
+The model I used is <a href="https://huggingface.co/HuggingFaceTB/SmolLM2-135M" target=_blank>SmolLM-135M</a>, a small but real Llama-style transformer with 30 layers, 9 attention heads, and 576-dimensional hidden states. The weights are loaded from HuggingFace's safetensors format and flattened into a single SQLite table:
+<p>
+<code>
+weights(name TEXT, i0 INTEGER, i1 INTEGER, val REAL)
+</code>
+</p>
+Every weight in every layer lives here. The embedding matrix, the QKV projections, the FFN, the layer norms, all of it, as rows in a table.
 </p>
 <p>
-MCP is a gateway between an LLM and an external tool to provide real-time data or perform an action.
+Inference is a Bash script that drives sqlite3 through 9 SQL files per layer, 30 layers per token. The operations map cleanly:
+<ul>
+<li><b>Embedding lookup</b> → <code>SELECT val FROM weights WHERE name = 'embed_tokens' AND i0 = token_id</code>
+<li><b>Matrix multiplication</b> → <code>SUM(normed.val * weights.val) GROUP BY dim</code>
+<li><b>RMSNorm</b> → <code>SQRT(AVG(val * val))</code> per position
+<li><b>RoPE</b> → cosine/sine rotations using <code>COS()</code> and <code>SIN()</code> built-ins
+<li><b>Grouped Query Attention + Softmax</b> → <code>MAX()</code> for stability, <code>EXP()</code> for exponentiation, <code>SUM()</code> for the denominator
+<li><b>SwiGLU</b> → <code>gate * (1 / (1 + EXP(-gate))) * up</code>
+<li><b>Sampling</b> → <code>ORDER BY score DESC LIMIT 1</code>
+</ul>
+It works. Given the prompt "The capital of France is", it returns " Paris".
 </p>
-<br/>
 <p>
-The core concept is identical. Just as CGI was essential for making the web dynamic, MCP will be critical for making LLMs more powerful and grounded in the real world. It really feels like a classic case of "what is old is new again."
+It works, but its extremely slow taking ~6 minutes to generate one token.
 </p>
+<a href="https://github.com/gaurangsinha/sqllm" target=_blank><img src="https://gh-card.dev/repos/gaurangsinha/sqllm.svg?fullname="></a>
 <p>
    <a style="float:right;" href="00_posts.html">all posts =&gt;</a>
 </p>
@@ -67,7 +76,7 @@ The core concept is identical. Just as CGI was essential for making the web dyna
     </div>
 
     <footer class="footer">
-      <p>&copy; 2025
+      <p>&copy; 2026
  Gaurang Sinha. All rights reserved.</p>
       <p>built using <a href="https://github.com/gaurangsinha/m4ke">m4ke</a></p>
     </footer>
