@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Running an LLM in SQL (Part 1)">
-  <title>gaurang.dev | SQL LLM</title>
+  <meta name="description" content="Running an LLM in SQL (Part 2)">
+  <title>gaurang.dev | SQL LLM (part 2)</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,55 +20,92 @@
       
     </header>
 
-    <h2>SQL LLM</h2>
+    <h2>SQL LLM (part 2)</h2>
     <p style="color: #a8a8a8">
-      2026-04-06
+      2026-04-13
     </p>
     <div class="content">
 
 
+<p>
+In Part 1, I built an LLM inference engine in pure SQL. It works. It's also painfully slow — around 6 minutes per token on a stock SQLite build.
+</p>
+<p>
+But "slow" is a starting point, not a destination. If the computation is fundamentally relational, then the question becomes: how good can we make the relational engine itself?
+</p>
+<p>
+So we start by patching the SQLite source.
 
 <p>
-LLMs have mostly been black boxes to me, I know they needed GPUs to speed up calculations but didnt fully understand why.
+<b>⇒ The Bottleneck</b>
+Every token generation runs through 30 transformer layers. Each layer does roughly 6 large matrix multiplications (Q, K, V projections, output projection, and two FFN projections). Each matmul is a SUM(a.val * b.val) GROUP BY dim over tens of millions of row pairs.
+That's several billion floating-point multiply-accumulate operations per token, executed one row at a time by a query engine built for transactional workloads, reading from a 21 GB file on disk.
+
+The constraints are real. But there is room in three places: how the binary is compiled, how the aggregation loop runs, and how the database pages are cached and read from disk.
 </p>
 <p>
-My goal here was to get some understanding of the LLM inference. Looking at most of the examples online didnt really help me understand it any better.
+<b>⇒ Compile Smarter</b>
+The stock build uses -O2. That's reasonable for a general-purpose tool. For a compute-bound inner loop doing floating-point accumulation, it leaves a lot on the table.
+
+The patched build uses:
+
+-O3 -march=native -funroll-loops
+-O3 enables auto-vectorization. -march=native tells the compiler it can use every instruction set available on this specific machine — AVX2, FMA, whatever is there. -funroll-loops unrolls inner loops that the B-tree cursor traversal and VDBE interpreter spend time in.
+
+The inference workload is single-threaded by nature — one sqlite3 process, one query at a time. So SQLITE_THREADSAFE=0 drops the mutex lock/unlock pairs that bracket every VDBE API call. They're not free.
+
+Smaller binary too: stripping out SQLITE_OMIT_LOAD_EXTENSION, SQLITE_OMIT_DEPRECATED, and SQLITE_OMIT_PROGRESS_CALLBACK reduces binary size, which means more of the instruction cache is available for the code that actually runs.
 </p>
 <p>
-Knowing that inference is mostly matrix multiplication, which can be presented as
-<p>
+<b>⇒ The Hot Loop in SUM()</b>
+This one surprised me. SQLite's SUM() aggregate uses the Kahan-Babushka-Neumaier algorithm to compensate for floating-point rounding error. It's a good algorithm. It also adds three floating-point operations, two volatile temporaries, and an fabs() branch to every single row of every aggregate.
+
+For a matmul over a 576-dimensional weight matrix, SUM() is called roughly 330,000 times per output element. Per projection. Per layer. Per token.
+
+KBN is the right choice for financial data or integer accumulation at risk of overflow. For transformer weights — finite REAL values where the argmax output only needs to be approximately correct — it is unnecessary overhead.
+
+The patch adds a fast path in sumStep() in func.c:
 <code>
-SELECT SUM(a.val * b.val) FROM a JOIN b ON a.dim = b.dim;
+/* Fast path for REAL columns: skip Kahan-Babushka-Neumaier compensation. */
+p->rSum += sqlite3_value_double(argv[0]);
 </code>
-</p>
-I thought of creating an inference engine purely in SQL.  
-</p>
-<p>
-The model I used is <a href="https://huggingface.co/HuggingFaceTB/SmolLM2-135M" target=_blank>SmolLM-135M</a>, a small but real Llama-style transformer with 30 layers, 9 attention heads, and 576-dimensional hidden states. The weights are loaded from HuggingFace's safetensors format and flattened into a single SQLite table:
-<p>
-<code>
-weights(name TEXT, i0 INTEGER, i1 INTEGER, val REAL)
-</code>
-</p>
-Every weight in every layer lives here. The embedding matrix, the QKV projections, the FFN, the layer norms, all of it, as rows in a table.
+
+When the accumulator is already in floating-point mode (which it enters on the very first REAL it sees), subsequent REAL values bypass the compensation entirely. Integer overflow protection stays intact for the integer path.
 </p>
 <p>
-Inference is a Bash script that drives sqlite3 through 9 SQL files per layer, 30 layers per token. The operations map cleanly:
-<ul>
-<li><b>Embedding lookup</b> → <code>SELECT val FROM weights WHERE name = 'embed_tokens' AND i0 = token_id</code>
-<li><b>Matrix multiplication</b> → <code>SUM(normed.val * weights.val) GROUP BY dim</code>
-<li><b>RMSNorm</b> → <code>SQRT(AVG(val * val))</code> per position
-<li><b>RoPE</b> → cosine/sine rotations using <code>COS()</code> and <code>SIN()</code> built-ins
-<li><b>Grouped Query Attention + Softmax</b> → <code>MAX()</code> for stability, <code>EXP()</code> for exponentiation, <code>SUM()</code> for the denominator
-<li><b>SwiGLU</b> → <code>gate * (1 / (1 + EXP(-gate))) * up</code>
-<li><b>Sampling</b> → <code>ORDER BY score DESC LIMIT 1</code>
-</ul>
-It works. Given the prompt "The capital of France is", it returns " Paris".
+<b>⇒ Memory: Cache and mmap</b>
+The weights table is 21 GB. The default SQLite page cache is 2 MB.
+
+That mismatch means most B-tree page reads are cache misses. The B-tree interior nodes for the weight indexes get evicted between queries and have to be re-read from disk on every layer. Raising the compiled-in default from 2 MB to 256 MB keeps those interior nodes hot.
+
+SQLite also supports memory-mapped I/O, where file reads become virtual memory accesses instead of read() syscalls — letting the OS page cache work rather than layering another copy on top. The default compiled-in mmap size is 0 (disabled). The SQL schema already sets PRAGMA mmap_size = 30000000000, but that doesn't help for the reads that happen before the PRAGMA fires.
+
+Setting SQLITE_DEFAULT_MMAP_SIZE to 20 GB compiled in: the database is memory-mapped from the first file open. The 00_schema.sql PRAGMA then raises it further for subsequent reads.
+
+Two final tuning details: WAL autocheckpoint raised from 1000 to 100000 frames (inference never writes, so checkpointing is pure overhead), and SQLITE_DEFAULT_SYNCHRONOUS left alone (the schema already handles this).
 </p>
 <p>
-It works, but its extremely slow taking ~6 minutes to generate one token.
+<b>⇒ Results</b>
+<table>
+<thead>
+<td>Build</td><td>Wall time</td><td>CPU time</td><td>CPU%</td>
+</thread>
+<tr>
+<td>Stock (-O2)</td><td>6m 05s</td><td>309s</td><td>88%</td>
+</tr>
+<tr>
+<td>Patched (-O3 + all changes)</td><td>4m 07s</td><td>241s</td><td>98%</td>
+</tr>
+</table>
+
+~33% faster end-to-end.
+
+Both produce " Paris" for "The capital of France is". The output is identical.
 </p>
-<a href="https://github.com/gaurangsinha/sqllm" target=_blank><img src="https://gh-card.dev/repos/gaurangsinha/sqllm.svg?fullname="></a>
+<p>
+
+Next up: -ffast-math.
+
 <p>
    <a style="float:right;" href="00_posts.html">all posts =&gt;</a>
 </p>
