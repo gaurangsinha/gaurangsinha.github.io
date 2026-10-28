@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Running an LLM in SQL (Part 2)">
-  <title>gaurang.dev | SQL LLM (part 2)</title>
+  <meta name="description" content="The reality of machine-generated code.">
+  <title>gaurang.dev | urlfs and the Verification Bottleneck</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,91 +20,101 @@
       
     </header>
 
-    <h2>SQL LLM (part 2)</h2>
+    <h2>urlfs and the Verification Bottleneck</h2>
     <p style="color: #a8a8a8">
-      2026-04-13
+      2026-10-28
     </p>
     <div class="content">
 
 
+
 <p>
-In Part 1, I built an LLM inference engine in pure SQL. It works. It's also painfully slow — around 6 minutes per token on a stock SQLite build.
+I wanted to see where current models stand when pushed past standard web boilerplate and into systems software. So I set out to build <b>urlfs</b>.
 </p>
+
 <p>
-But "slow" is a starting point, not a destination. If the computation is fundamentally relational, then the question becomes: how good can we make the relational engine itself?
+The ask is simple, if slightly wierd: an entire stateful operating environment that lives inside a browser address bar.
 </p>
-<p>
-So we start by patching the SQLite source.
 
 <p>
-<b>⇒ The Bottleneck</b>
-Every token generation runs through 30 transformer layers. Each layer does roughly 6 large matrix multiplications (Q, K, V projections, output projection, and two FFN projections). Each matmul is a SUM(a.val * b.val) GROUP BY dim over tens of millions of row pairs.
-That's several billion floating-point multiply-accumulate operations per token, executed one row at a time by a query engine built for transactional workloads, reading from a 21 GB file on disk.
-
-The constraints are real. But there is room in three places: how the binary is compiled, how the aggregation loop runs, and how the database pages are cached and read from disk.
+A WebAssembly binary, a virtual filesystem, environment variables, command-line arguments, and standard I/O, all packed into a single client-side URL. You run an wasm executable in your browser, modify files, and the address bar updates in real time. Copy the link, send it to someone, and they boot up your exact machine state. Zero backend, zero server state.
 </p>
+
 <p>
-<b>⇒ Compile Smarter</b>
-The stock build uses -O2. That's reasonable for a general-purpose tool. For a compute-bound inner loop doing floating-point accumulation, it leaves a lot on the table.
-
-The patched build uses:
-
--O3 -march=native -funroll-loops
--O3 enables auto-vectorization. -march=native tells the compiler it can use every instruction set available on this specific machine — AVX2, FMA, whatever is there. -funroll-loops unrolls inner loops that the B-tree cursor traversal and VDBE interpreter spend time in.
-
-The inference workload is single-threaded by nature — one sqlite3 process, one query at a time. So SQLITE_THREADSAFE=0 drops the mutex lock/unlock pairs that bracket every VDBE API call. They're not free.
-
-Smaller binary too: stripping out SQLITE_OMIT_LOAD_EXTENSION, SQLITE_OMIT_DEPRECATED, and SQLITE_OMIT_PROGRESS_CALLBACK reduces binary size, which means more of the instruction cache is available for the code that actually runs.
+To make this work without cheating, it needed real systems plumbing:
 </p>
+
+<ul>
+  <li>A custom <b>WASI Preview 1</b> runtime running inside a Web Worker.</li>
+  <li>A binary wire format, compressed with raw DEFLATE (<code>deflate-raw</code>) into a base64url hash fragment.</li>
+  <li>An in-memory <b>WebAssembly bytecode assembler</b> capable of emitting working modules on the fly.</li>
+  <li>A <b>BusyBox simulation</b> featuring 30 standalone applets (<code>cat</code>, <code>cp</code>, <code>grep</code>, <code>head</code>, <code>tail</code>, <code>stat</code>, <code>df</code>, <code>free</code>, <code>ps</code>, and an interactive <code>sh</code>) implemented directly in raw WASM instructions.</li>
+</ul>
+
 <p>
-<b>⇒ The Hot Loop in SUM()</b>
-This one surprised me. SQLite's SUM() aggregate uses the Kahan-Babushka-Neumaier algorithm to compensate for floating-point rounding error. It's a good algorithm. It also adds three floating-point operations, two volatile temporaries, and an fabs() branch to every single row of every aggregate.
-
-For a matmul over a 576-dimensional weight matrix, SUM() is called roughly 330,000 times per output element. Per projection. Per layer. Per token.
-
-KBN is the right choice for financial data or integer accumulation at risk of overflow. For transformer weights — finite REAL values where the argmax output only needs to be approximately correct — it is unnecessary overhead.
-
-The patch adds a fast path in sumStep() in func.c:
-<code>
-/* Fast path for REAL columns: skip Kahan-Babushka-Neumaier compensation. */
-p->rSum += sqlite3_value_double(argv[0]);
-</code>
-
-When the accumulator is already in floating-point mode (which it enters on the very first REAL it sees), subsequent REAL values bypass the compensation entirely. Integer overflow protection stays intact for the integer path.
+I built the entire project with <b>Gemini 3.8 Flash High</b> using <b>Antigravity</b>.
 </p>
+
 <p>
-<b>⇒ Memory: Cache and mmap</b>
-The weights table is 21 GB. The default SQLite page cache is 2 MB.
-
-That mismatch means most B-tree page reads are cache misses. The B-tree interior nodes for the weight indexes get evicted between queries and have to be re-read from disk on every layer. Raising the compiled-in default from 2 MB to 256 MB keeps those interior nodes hot.
-
-SQLite also supports memory-mapped I/O, where file reads become virtual memory accesses instead of read() syscalls — letting the OS page cache work rather than layering another copy on top. The default compiled-in mmap size is 0 (disabled). The SQL schema already sets PRAGMA mmap_size = 30000000000, but that doesn't help for the reads that happen before the PRAGMA fires.
-
-Setting SQLITE_DEFAULT_MMAP_SIZE to 20 GB compiled in: the database is memory-mapped from the first file open. The 00_schema.sql PRAGMA then raises it further for subsequent reads.
-
-Two final tuning details: WAL autocheckpoint raised from 1000 to 100000 frames (inference never writes, so checkpointing is pure overhead), and SQLITE_DEFAULT_SYNCHRONOUS left alone (the schema already handles this).
+Here is what I learned.
 </p>
+
+<h4>⇒ One-Shot Structural Competence</h4>
 <p>
-<b>⇒ Results</b>
-<table>
-<thead>
-<td>Build</td><td>Wall time</td><td>CPU time</td><td>CPU%</td>
-</thread>
-<tr>
-<td>Stock (-O2)</td><td>6m 05s</td><td>309s</td><td>88%</td>
-</tr>
-<tr>
-<td>Patched (-O3 + all changes)</td><td>4m 07s</td><td>241s</td><td>98%</td>
-</tr>
-</table>
-
-~33% faster end-to-end.
-
-Both produce " Paris" for "The capital of France is". The output is identical.
+Going in, I anticipated the usual failure modes that have plagued LLM-assisted programming: confident hallucinations of function names, sloppy alignment and context drift as the codebase crossed 3,000 lines.
 </p>
-<p>
 
-Next up: -ffast-math.
+<p>
+That is not what happened. The model showed an amazing degree of competence.
+</p>
+
+<p>
+More strikingly, it wrote the bytecode emitter and assembled 30 BusyBox applets directly into binary WASM without relying on an external compiler toolchain like Emscripten or Rust. It understood WebAssembly's stack machine semantics, local variable indices, and structured control flow blocks (<code>block</code>, <code>loop</code>, <code>br_if</code>) with virtually zero architectural hallucinations.
+</p>
+
+<p>
+Surprisingly, the system was synthesized with speed and shocking coherence.
+</p>
+
+<h4>⇒ Verification is the New Bottleneck</h4>
+<p>
+When the cost of producing syntactically plausible, complex systems code drops to near zero, the developer's role fundamentally inverts.
+</p>
+
+<p>
+You no longer spend your day writing implementations. But you also cannot simply eyeball 3,000 lines of generated code or trust that a binary handles edge cases cleanly across all browsers.
+</p>
+
+<p>
+The developer's job shifts entirely to <b>verification</b>.
+</p>
+
+<p>
+Nearly all the human effort on <code>urlfs</code> went into building the harness:
+</p>
+
+<ol>
+  <li><b>Wire-format fuzzing</b> (<code>test_wire_format.js</code>): Verifying roundtrip serialization, bit-level integrity, and raw DEFLATE boundary conditions.</li>
+  <li><b>Bytecode validation</b> (<code>test_all_demos.js</code>): Running all 30 BusyBox applets and demo binaries through the WASI runtime in Node to assert standard stream outputs.</li>
+  <li><b>End-to-End browser automation</b> (<code>test_in_chrome.js</code>): Spawning headless Chrome over the DevTools Protocol to verify that the Web Worker, VFS synchronization, terminal UI, and URL hash updates didn't race or desync under real DOM conditions.</li>
+</ol>
+
+<p>
+In an AI-dominated workflow, unverified code is just liability. If you haven't written the automated harness to rigorously falsify the model's output, you haven't actually built software, you've just accumulated debt.
+</p>
+
+<h4>⇒ The Gating Factor</h4>
+<p>
+There is a natural progression in how we interact with computing abstractions. Previously, we moved from writing raw assembly to higher-level compiled languages, the compiler took over register allocation and instruction scheduling, and we adjusted our mental models to interface design and algorithmic complexity.
+</p>
+
+<p>
+Working with the current models on <code>urlfs</code> felt like another step across that boundary. The model doesn't just autocomplete boilerplate; it holds large, complex system interfaces in working memory and generates functional implementations across multiple layers of abstraction.
+</p>
+
+<p>
+The bottleneck is no longer synthesis. The bottleneck is our ability to specify constraints and build deterministic verification loops fast enough to keep up with the generator.
+</p>
 
 <p>
    <a style="float:right;" href="00_posts.html">all posts =&gt;</a>

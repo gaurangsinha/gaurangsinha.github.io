@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The reality of machine-generated code.">
+  <title>gaurang.dev | urlfs and the Verification Bottleneck</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <a href="https://gaurang.dev"><h1>gaurang.dev</h1></a>
+      
+      <ul>     
+        <li><a href="00_about.html">About</a></li>
+        <li><a href="00_posts.html">Posts</a></li>
+        <li><a href="00_contact.html">Contact</a></li>
+      </ul>
+      
+    </header>
+
+    <h2>urlfs and the Verification Bottleneck</h2>
+    <p style="color: #a8a8a8">
+      2026-10-28
+    </p>
+    <div class="content">
+
+
+
+<p>
+I wanted to see where current models stand when pushed past standard web boilerplate and into systems software. So I set out to build <b>urlfs</b>.
+</p>
+
+<p>
+The ask is simple, if slightly wierd: an entire stateful operating environment that lives inside a browser address bar.
+</p>
+
+<p>
+A WebAssembly binary, a virtual filesystem, environment variables, command-line arguments, and standard I/O, all packed into a single client-side URL. You run an wasm executable in your browser, modify files, and the address bar updates in real time. Copy the link, send it to someone, and they boot up your exact machine state. Zero backend, zero server state.
+</p>
+
+<p>
+To make this work without cheating, it needed real systems plumbing:
+</p>
+
+<ul>
+  <li>A custom <b>WASI Preview 1</b> runtime running inside a Web Worker.</li>
+  <li>A binary wire format, compressed with raw DEFLATE (<code>deflate-raw</code>) into a base64url hash fragment.</li>
+  <li>An in-memory <b>WebAssembly bytecode assembler</b> capable of emitting working modules on the fly.</li>
+  <li>A <b>BusyBox simulation</b> featuring 30 standalone applets (<code>cat</code>, <code>cp</code>, <code>grep</code>, <code>head</code>, <code>tail</code>, <code>stat</code>, <code>df</code>, <code>free</code>, <code>ps</code>, and an interactive <code>sh</code>) implemented directly in raw WASM instructions.</li>
+</ul>
+
+<p>
+I built the entire project with <b>Gemini 3.8 Flash High</b> using <b>Antigravity</b>.
+</p>
+
+<p>
+Here is what I learned.
+</p>
+
+<h4>⇒ One-Shot Structural Competence</h4>
+<p>
+Going in, I anticipated the usual failure modes that have plagued LLM-assisted programming: confident hallucinations of function names, sloppy alignment and context drift as the codebase crossed 3,000 lines.
+</p>
+
+<p>
+That is not what happened. The model showed an amazing degree of competence.
+</p>
+
+<p>
+More strikingly, it wrote the bytecode emitter and assembled 30 BusyBox applets directly into binary WASM without relying on an external compiler toolchain like Emscripten or Rust. It understood WebAssembly's stack machine semantics, local variable indices, and structured control flow blocks (<code>block</code>, <code>loop</code>, <code>br_if</code>) with virtually zero architectural hallucinations.
+</p>
+
+<p>
+Surprisingly, the system was synthesized with speed and shocking coherence.
+</p>
+
+<h4>⇒ Verification is the New Bottleneck</h4>
+<p>
+When the cost of producing syntactically plausible, complex systems code drops to near zero, the developer's role fundamentally inverts.
+</p>
+
+<p>
+You no longer spend your day writing implementations. But you also cannot simply eyeball 3,000 lines of generated code or trust that a binary handles edge cases cleanly across all browsers.
+</p>
+
+<p>
+The developer's job shifts entirely to <b>verification</b>.
+</p>
+
+<p>
+Nearly all the human effort on <code>urlfs</code> went into building the harness:
+</p>
+
+<ol>
+  <li><b>Wire-format fuzzing</b> (<code>test_wire_format.js</code>): Verifying roundtrip serialization, bit-level integrity, and raw DEFLATE boundary conditions.</li>
+  <li><b>Bytecode validation</b> (<code>test_all_demos.js</code>): Running all 30 BusyBox applets and demo binaries through the WASI runtime in Node to assert standard stream outputs.</li>
+  <li><b>End-to-End browser automation</b> (<code>test_in_chrome.js</code>): Spawning headless Chrome over the DevTools Protocol to verify that the Web Worker, VFS synchronization, terminal UI, and URL hash updates didn't race or desync under real DOM conditions.</li>
+</ol>
+
+<p>
+In an AI-dominated workflow, unverified code is just liability. If you haven't written the automated harness to rigorously falsify the model's output, you haven't actually built software, you've just accumulated debt.
+</p>
+
+<h4>⇒ The Gating Factor</h4>
+<p>
+There is a natural progression in how we interact with computing abstractions. Previously, we moved from writing raw assembly to higher-level compiled languages, the compiler took over register allocation and instruction scheduling, and we adjusted our mental models to interface design and algorithmic complexity.
+</p>
+
+<p>
+Working with the current models on <code>urlfs</code> felt like another step across that boundary. The model doesn't just autocomplete boilerplate; it holds large, complex system interfaces in working memory and generates functional implementations across multiple layers of abstraction.
+</p>
+
+<p>
+The bottleneck is no longer synthesis. The bottleneck is our ability to specify constraints and build deterministic verification loops fast enough to keep up with the generator.
+</p>
+
+<p>
+   <a style="float:right;" href="00_posts.html">all posts =&gt;</a>
+</p>
+
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2026
+ Gaurang Sinha. All rights reserved.</p>
+      <p>built using <a href="https://github.com/gaurangsinha/m4ke">m4ke</a></p>
+    </footer>
+  </div>
+</body>
+</html>
+
+
+
